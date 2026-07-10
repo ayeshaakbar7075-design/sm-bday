@@ -1,0 +1,362 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background-color: #222244;
+  /* font-family: Arial, sans-serif; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hint {
+  color: white;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+/* hide the checkboxes, we only use them to store state */
+input.flip {
+  display: none;
+}
+
+/* the "stage" that gives the 3D effect */
+.book-container {
+  width: 700px;
+  height: 450px;
+  perspective: 1500px;
+}
+
+.book {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* every page sits on top of each other in the same spot */
+.page {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.5);
+
+  /* rotate from the left edge, like a real book */
+  transform-origin: left;
+ transition: transform 2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+
+  display: flex;
+  backface-visibility: hidden;
+   transform-style: preserve-3d;
+  
+}
+.page::before {
+
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 100%;
+  background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes curlShadow {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes curlBulge {
+  0%   { border-radius: 10px; }
+  50%  { border-radius: 10px 90px 90px 10px / 10px 160px 160px 10px; }
+  100% { border-radius: 10px; }
+}
+#p1:checked + .p1::before,
+#p2:checked + .p2::before,
+#p3:checked + .p3::before,
+#p4:checked + .p4::before,
+#p5:checked + .p5::before,
+#p6:checked + .p6::before {
+  opacity: 1;
+   animation: curlShadow 1.6s ease-in-out;
+}
+.page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #fdf6ec;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+/* z-index controls which page is on top before anything is flipped */
+.p1 { z-index: 7; }
+.p2 { z-index: 6; }
+.p3 { z-index: 5; }
+.p4 { z-index: 4; }
+.p5 { z-index: 3; }
+.p6 { z-index: 2; }
+.p7 { z-index: 1; }
+
+/* when its matching checkbox is checked, the page flips
+   and drops behind everything else */
+#p1:checked + .p1,
+#p2:checked + .p2,
+#p3:checked + .p3,
+#p4:checked + .p4,
+#p5:checked + .p5,
+#p6:checked + .p6 {
+  transform: rotateY(-180deg);
+  z-index: 0;
+  animation: curlBulge 1.6s ease-in-out;
+}
+
+/* COVER PAGE */
+.cover {
+  background:linear-gradient(160deg, #FF6B9D 0%, #FF8FB3 45%, #FFC93C 100%);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+
+}
+.cover p{
+   font-family:Dancing Script;
+    font-size: 30px;
+}
+.cover h1 {
+  font-family: 'Caveat';
+  font-weight: 700;
+  font-size: 60px;
+}
+
+
+/* CONTENT PAGES */
+.left-page {
+  width: 50%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
+}
+
+.left-page img {
+  width: 90%;
+  height: 90%;
+  /* background-image:url("muskaan.1.jpeg");
+  background-size: cover; */
+  object-fit: contain;
+  border: 2px solid black;
+  border-radius: 8px;
+   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.left-page img:hover {
+  transform: scale(1.08);                                   
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);               
+}
+
+.right-page {
+  width: 50%;
+  padding: 20px;
+  padding-bottom:70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction:column;
+  
+}
+.right-page h1{
+    display:flex;
+    font-family:cursive;
+    flex-direction:column;
+}
+
+.right-page p {
+  font-size: 20;
+  color: #333;
+  font-family: cursive;
+}
+.page-container{
+     width: 100%;
+  height: 100%;
+  display: flex;
+ 
+  border: 2px dashed #999;
+  margin-top:0px;
+  margin-bottom:10px;
+  margin-left:10px;
+  margin-right:10px;
+  /* padding-bottom:3px; */
+  box-sizing: border-box;
+   border-radius: 10px;
+
+ 
+}
+/* LAST PAGE */
+.last-page {
+  background-color: lightseagreen;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+
+/* the clickable next/prev buttons, sitting inside each page */
+.corner {
+  position: absolute;
+  bottom: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.corner.next {
+  right: 15px;
+   padding: 8px 20px;
+            font-size: 16px;
+            background-color:soft pink;
+}
+
+.corner.prev {
+  left: 15px;
+}
+.polaroid {
+  width:240px;
+  background-color: white;
+  padding:8px 8px 30px 8px;  /* extra space at the bottom for the "caption strip" */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transform: rotate(-3deg);        /* slight tilt, feels more casual/candid */
+}
+
+.polaroid img {
+  width: 100%;
+  height:220px;
+  object-fit:contain;
+  display: block;
+  border-radius:0px;
+  border:1px solid black;
+}
+
+.polaroid p {
+  text-align: center;
+  font-family: 'Caveat', cursive;   /* handwritten-style caption */
+  margin-top: 10px;
+}
+.last-page {
+  background: linear-gradient(
+    to bottom right,
+    #5CC9D2,
+    #6AD4C8,
+    #A8DB9A,
+    #EED86A
+);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+}
+.heart{
+    position:absolute;
+    color:#ff4f9a;
+    font-size:35px;
+    animation:float 6s linear infinite;
+    opacity:.6;
+}
+
+.heart1{
+    left:8%;
+    bottom:50px;
+}
+
+.heart2{
+    left:85%;
+    bottom:120px;
+    animation-delay:2s;
+}
+
+.heart3{
+    left:55%;
+    bottom:80px;
+    animation-delay:4s;
+}
+.heart4{
+    left:28%;
+    bottom:70px;
+}
+
+.heart5{
+    left:5%;
+    bottom:12px;
+    animation-delay:2s;
+}
+
+.heart6{
+    right:55%;
+  top:80px;
+    animation-delay:4s;
+}
+.heart7{
+    right:55%;
+  top:80px;
+    animation-delay:4s;
+}
+.heart8{
+    right:55%;
+  top:80px;
+    animation-delay:4s;
+}
+.heart9{
+    right:55%;
+  top:80px;
+    animation-delay:4s;
+}
+.heart10{
+    right:5%;
+  top:18px;
+    animation-delay:4s;
+}
+@keyframes float{
+
+0%{
+transform:translateY(0);
+opacity:0;
+}
+
+20%{
+opacity:1;
+}
+
+100%{
+transform:translateY(-120vh);
+opacity:0;
+}
+
+}
+.stars{
+    position:absolute;
+    width:100%;
+    height:100%;
+    background-image:
+    radial-gradient(white 2px,transparent 2px),
+    radial-gradient(white 1px,transparent 1px);
+
+    background-size:140px 140px;
+    background-position:0 0,70px 70px;
+    opacity:.35;
+}
